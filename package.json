@@ -1,0 +1,33 @@
+{
+  "name": "koa-cms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --harmony app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henley02/koa-cms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henley02/koa-cms/issues"
+  },
+  "homepage": "https://github.com/henley02/koa-cms#readme",
+  "devDependencies": {
+  },
+  "dependencies": {
+    "art-template": "^4.13.0",
+    "koa": "^2.5.2",
+    "koa-art-template": "^1.1.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.9.0",
+    "koa-static": "^5.0.0",
+    "mongodb": "^3.1.6"
+  }
+}
