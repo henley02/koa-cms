@@ -46,29 +46,50 @@ class DB {
         })
     }
 
-    update() {
-
+    update(collectionName, condition, json) {
+        return new Promise((resolve, reject) => {
+            this.connect().then((db) => {
+                let result = db.collection(collectionName).updateOne(condition, {$set: json});
+                result.toArray((error, data) => {
+                    if (!error) {
+                        resolve(data);
+                    } else {
+                        reject(error);
+                    }
+                })
+            })
+        })
     }
 
-    insert() {
+    insert(collectionName, json) {
+        return new Promise((resolve, reject) => {
+            this.connect().then((db) => {
+                let result = db.collection(collectionName).insertOne(json);
+                result.toArray((error, data) => {
+                    if (!error) {
+                        resolve(data);
+                    } else {
+                        reject(error);
+                    }
+                })
+            })
+        })
+    }
 
+    deleteOne(collectionName, json) {
+        return new Promise((resolve, reject) => {
+            this.connect().then((db) => {
+                let result = db.collection(collectionName).deleteOne(json);
+                result.toArray((error, data) => {
+                    if (!error) {
+                        resolve(data);
+                    } else {
+                        reject(error);
+                    }
+                })
+            })
+        })
     }
 }
 
-setTimeout(() => {
-    var myDB = new DB();
-    console.time('start');
-    myDB.find('userTest').then((data) => {
-        console.log(data);
-        console.timeEnd('start');
-    })
-}, 0)
-
-setTimeout(() => {
-    var myDB1 = new DB();
-    console.time('start1');
-    myDB1.find('userTest').then((data) => {
-        console.log(data);
-        console.timeEnd('start1');
-    })
-}, 2000);
+module.exports = new DB();
