@@ -1,6 +1,7 @@
 const {dbName, dbUrl} = require('./config');
-const MongoClient = require('mongodb').MongoClient;
-
+let MongoDB = require('mongodb');
+const MongoClient = MongoDB.MongoClient;
+const ObjectID = MongoDB.ObjectID;
 
 class DB {
     constructor() {
@@ -89,6 +90,10 @@ class DB {
                 })
             })
         })
+    }
+
+    getObjectId(id) {    /*mongodb里面查询 _id 把字符串转换成对象*/
+        return new ObjectID(id);
     }
 }
 
