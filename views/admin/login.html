@@ -21,6 +21,16 @@
         margin-top: 0px;
         padding-bottom: 12px;
     }
+
+    #codeImg {
+        cursor: pointer;
+        float: right;
+    }
+
+    input[name='code'] {
+        width: 200px;
+        float: left;
+    }
 </style>
 
 <body class="login-layout">
@@ -37,28 +47,28 @@
                                         CMS内容管理系统
                                     </h2>
                                     <div class="space-6"></div>
-                                    <form action="{{__HOST}}/admin/doLogin" method="post">
+                                    <div>
                                         <fieldset>
                                             <label class="block clearfix">
                                                 <span class="block input-icon input-icon-right">
-                                                    <input type="text" class="form-control" placeholder="用户名" name="username"/>
+                                                    <input type="text" class="form-control" placeholder="用户名"
+                                                           name="username" id="username"/>
                                                     <i class="icon-user"></i>
                                                 </span>
                                             </label>
                                             <label class="block clearfix">
                                                 <span class="block input-icon input-icon-right">
-                                                    <input type="password" class="form-control" placeholder="密码" name="password"/>
+                                                    <input type="password" class="form-control" placeholder="密码"
+                                                           name="password" id="password"/>
                                                     <i class="icon-lock"></i>
                                                 </span>
                                             </label>
 
                                             <label class="block clearfix">
                                                 <span class="block input-icon input-icon-right">
-                                                    <input type="password" class="form-control"
-                                                           placeholder="验证吗" style="width:200px;float:left;"/>
-                                                    <img style="float:right;"
-                                                         src="https://www.itying.com/koa/admin_express.php?m=Public&a=verify&rand=1521453067"
-                                                         alt="">
+                                                    <input type="text" class="form-control" placeholder="验证吗"
+                                                           name="code" id="code"/>
+                                                    <img id="codeImg" src="{{__HOST}}/admin/code"/>
                                                 </span>
                                             </label>
 
@@ -70,26 +80,58 @@
                                                     <span class="lbl"> Remember Me</span>
                                                 </label>
 
-                                                <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+                                                <button id="loginBtn" type="button"
+                                                        class="width-35 pull-right btn btn-sm btn-primary">
                                                     <i class="icon-key"></i>
                                                     登录
                                                 </button>
                                             </div>
                                             <div class="space-4"></div>
                                         </fieldset>
-                                    </form>
-                                </div><!-- /widget-main -->
-                            </div><!-- /widget-body -->
-                        </div><!-- /login-box -->
-                    </div><!-- /position-relative -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div><!-- /.col -->
-        </div><!-- /.row -->
+            </div>
+        </div>
     </div>
-</div><!-- /.main-container -->
-
-<!-- basic scripts -->
+</div>
 
 
-</body>
-</html>
+{{include 'admin/components/footer.html'}}
+<script>
+    //获取图形验证码
+    $("#codeImg").click(function () {
+        $("#codeImg").attr('src', '{{__HOST}}/admin/code?t=' + new Date().getTime());
+    })
+    $('#loginBtn').click(function () {
+        if ($("#username").val().trim() === '' || $("#password").val().trim() === '') {
+            Ewin.alert({title: '温馨提示', message: '用户名或者密码不能为空'});
+            return false;
+        } else if ($("#code").val().trim() === '') {
+            Ewin.alert({title: '温馨提示', message: '验证码不能为空'});
+            return false;
+        }
+        $.ajax({
+            url: "{{__HOST}}/admin/doLogin",
+            data: {
+                username: $('#username').val(),
+                password: $('#password').val(),
+                code: $('#code').val()
+            },
+            type: "post",    //数据发送方式
+            error: function () {
+                alert("服务器没有返回数据，可能服务器忙，请重试");
+            },
+            success: function (res) {
+                if (res.code === 1) {
+                    location.href = '/admin';
+                } else {
+                    Ewin.alert({title: '温馨提示', message: res.msg});
+                }
+            }
+        });
+    })
+</script>

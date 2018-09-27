@@ -1,20 +1,62 @@
 const router = require('koa-router')();
+const svgCaptcha = require('svg-captcha');
 const {getMD5} = require('./../../module/tool');
 const DB = require('./../../module/db');
 
+/**
+ * 打开登录
+ */
 router.get('/login', async (ctx, next) => {
     ctx.render('admin/login')
 })
 
+/**
+ * 执行登录
+ */
 router.post('/doLogin', async (ctx, next) => {
     let params = ctx.request.body;
+    if (params.code.toLowerCase() !== ctx.session.captcha.toLowerCase()) {//验证 验证码
+        ctx.body = {
+            code: -1,
+            msg: '验证码不对',
+        };
+        return false;
+    }
     params.password = getMD5(params.password);
-    let res = await DB.find('admin', params);
+    console.log(params);
+    let res = await DB.find('admin', {username: params.username, password: params.password});
     if (res.length == 0) {
-        console.log('没有这个用户');
+        ctx.body = {
+            code: -1,
+            msg: '没有这个用户或者密码错误',
+        }
     } else {
-        ctx.session.userInfo = params.username;
-        ctx.redirect('/admin');
+        ctx.session.userInfo = res[0];
+        ctx.body = {
+            code: 1,
+            msg: '登录成功',
+        }
     }
 })
+
+router.get('/logout', async (ctx, next) => {
+    ctx.session = null
+    ctx.redirect('/admin/login');
+})
+/**
+ * 获取图形验证码
+ */
+router.get('/code', async (ctx, next) => {
+    let captcha = svgCaptcha.create({
+        size: 4,
+        fontSize: 50,
+        width: 120,
+        height: 34,
+        background: "#cc9966"
+    })
+    ctx.session.captcha = captcha.text; // session 存储
+    ctx.response.type = 'image/svg+xml';
+    ctx.body = captcha.data;
+})
+
 module.exports = router.routes();
