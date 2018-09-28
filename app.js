@@ -5,6 +5,7 @@ const path = require('path');
 const static = require('koa-static');
 const session = require('koa-session');
 const bodyParser = require('koa-bodyparser');
+const sillyDateTime = require('silly-datetime');
 const app = new koa();
 
 app.keys = ['321321fafasf'];
@@ -23,10 +24,15 @@ app.use(session(CONFIG, app));
 app.use(bodyParser());
 
 render(app, {
-    root: path.join(__dirname, 'views'),
-    extname: '.html',
-    debug: process.env.NODE_ENV !== 'production'
-});
+        root: path.join(__dirname, 'views'),
+        extname: '.html',
+        debug: process.env.NODE_ENV !== 'production',
+        //格式化日期
+        dateFormat: dateFormat = function (value, format = 'YYYY-MM-DD HH:mm') {
+            return sillyDateTime.format(new Date(value), format)
+        },
+    }
+)
 
 
 const admin = require('./routes/admin');

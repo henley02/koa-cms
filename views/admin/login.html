@@ -123,7 +123,7 @@
             },
             type: "post",    //数据发送方式
             error: function () {
-                alert("服务器没有返回数据，可能服务器忙，请重试");
+                Ewin.alert({title: '温馨提示', message: '服务器没有返回数据，可能服务器忙，请重试'});
             },
             success: function (res) {
                 if (res.code === 1) {

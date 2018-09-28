@@ -23,7 +23,6 @@ router.post('/doLogin', async (ctx, next) => {
         return false;
     }
     params.password = getMD5(params.password);
-    console.log(params);
     let res = await DB.find('admin', {username: params.username, password: params.password});
     if (res.length == 0) {
         ctx.body = {
@@ -32,6 +31,11 @@ router.post('/doLogin', async (ctx, next) => {
         }
     } else {
         ctx.session.userInfo = res[0];
+        //更新用户表 改变用户登录的时间
+        await DB.update('admin', {
+            username: params.username,
+            password: params.password
+        }, {'last_time': new Date()});
         ctx.body = {
             code: 1,
             msg: '登录成功',
@@ -40,7 +44,7 @@ router.post('/doLogin', async (ctx, next) => {
 })
 
 router.get('/logout', async (ctx, next) => {
-    ctx.session = null
+    ctx.session.userInfo = null
     ctx.redirect('/admin/login');
 })
 /**

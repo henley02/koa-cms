@@ -47,52 +47,74 @@ class DB {
         })
     }
 
+    /**
+     * 更新数据
+     * @param collectionName
+     * @param condition
+     * @param json
+     * @returns {Promise}
+     */
     update(collectionName, condition, json) {
         return new Promise((resolve, reject) => {
             this.connect().then((db) => {
-                let result = db.collection(collectionName).updateOne(condition, {$set: json});
-                result.toArray((error, data) => {
+                db.collection(collectionName).updateOne(condition, {$set: json}, (error, data) => {
                     if (!error) {
                         resolve(data);
                     } else {
                         reject(error);
                     }
-                })
+                });
             })
         })
     }
 
+    /**
+     * 插入一条数据
+     * @param collectionName
+     * @param json
+     * @returns {Promise}
+     */
     insert(collectionName, json) {
         return new Promise((resolve, reject) => {
             this.connect().then((db) => {
-                let result = db.collection(collectionName).insertOne(json);
-                result.toArray((error, data) => {
-                    if (!error) {
-                        resolve(data);
+                db.collection(collectionName).insertOne(json, (err, result) => {
+                    if (err) {
+                        reject(err);
                     } else {
-                        reject(error);
+                        resolve(result);
                     }
-                })
+                });
             })
         })
     }
 
+    /**
+     * 删除一条记录
+     * @param collectionName
+     * @param json
+     * @returns {Promise}
+     */
     deleteOne(collectionName, json) {
         return new Promise((resolve, reject) => {
             this.connect().then((db) => {
-                let result = db.collection(collectionName).deleteOne(json);
-                result.toArray((error, data) => {
-                    if (!error) {
-                        resolve(data);
+                db.collection(collectionName).deleteOne(json, function (err, result) {
+                    if (err) {
+                        reject(err);
                     } else {
-                        reject(error);
+
+                        resolve(result);
                     }
-                })
+                });
             })
         })
     }
 
-    getObjectId(id) {    /*mongodb里面查询 _id 把字符串转换成对象*/
+    /**
+     * mongodb里面查询 _id 把字符串转换成对象
+     * @param id
+     * @returns {*}
+     */
+    getObjectId(id) {
         return new ObjectID(id);
     }
 }

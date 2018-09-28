@@ -33,14 +33,14 @@
     </div><!-- #sidebar-shortcuts -->
 
     <ul class="nav nav-list">
-        <li class="active">
+        <li class="">
             <a href="index.html">
                 <i class="icon-dashboard"></i>
                 <span class="menu-text"> 控制台 </span>
             </a>
         </li>
 
-        <li>
+        <li {{if GLOBAL.url[1]==='manage'}} class="active open" {{/if}}>
             <a href="#" class="dropdown-toggle">
                 <i class="icon-user-md"></i>
                 <span class="menu-text"> 管理员管理 </span>
@@ -48,14 +48,14 @@
             </a>
 
             <ul class="submenu">
-                <li>
-                    <a href="{{_HOST}}/admin/user">
+                <li {{if GLOBAL.url[1]==='manage' && !GLOBAL.url[2]}} class="active" {{/if}}>
+                    <a href="{{_HOST}}/admin/manage">
                         <i class="icon-double-angle-right"></i>
                         管理员列表
                     </a>
                 </li>
-                <li>
-                    <a href="{{_HOST}}/admin/user/add">
+                <li {{if GLOBAL.url[1]==='manage' && GLOBAL.url[2]==='add'}} class="active" {{/if}}>
+                    <a href="{{_HOST}}/admin/manage/add">
                         <i class="icon-double-angle-right"></i>
                         增加管理员
                     </a>
