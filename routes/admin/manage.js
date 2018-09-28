@@ -1,4 +1,5 @@
 const router = require('koa-router')();
+const md5 = require('md5');
 const DB = require('./../../module/db');
 const {usernameReg, passwordReg} = require('./../../module/config');
 
@@ -10,11 +11,10 @@ router.get('/', async (ctx, next) => {
 })
 
 router.get('/add', async (ctx, next) => {
-    await ctx.render('admin/manage/add', {usernameReg, passwordReg});
+    await ctx.render('admin/manage/add');
 })
 
 router.post('/doAdd', async (ctx, next) => {
-
     let username = ctx.request.body.username;
     let password = ctx.request.body.password;
     if (!usernameReg.test(username)) {
@@ -28,12 +28,43 @@ router.post('/doAdd', async (ctx, next) => {
             msg: '密码最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符',
         }
     } else {
-        console.log(ctx.request.body);
+        let data = await DB.find('admin', {username: username});
+        if (data.length > 0) {
+            ctx.body = {
+                code: -1,
+                msg: '用户名已经存在，请换个用户名',
+            }
+        } else {
+            let result = await DB.insert('admin', {
+                username: username,
+                password: md5(password),
+                status: 1,
+                last_time: ''
+            });
+            if (result) {
+                ctx.body = {
+                    code: 1,
+                    msg: '添加用户成功',
+                }
+            } else {
+                ctx.body = {
+                    code: -1,
+                    msg: '添加用户失败',
+                }
+            }
+        }
     }
 })
 
 router.get('/edit', async (ctx, next) => {
-    ctx.body = '编辑用户';
+    let _id = ctx.query.id;
+    let result = await DB.find('admin', {_id: DB.getObjectId(_id)});
+    console.log(result)
+    if (result.length > 0) {
+        ctx.render('admin/manage/edit', {
+            data: result[0]
+        });
+    }
 })
 
 router.get('/delete', async (ctx, next) => {

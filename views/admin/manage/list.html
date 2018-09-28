@@ -62,16 +62,14 @@
                         </td>
                         <td>
                             <div class="visible-md visible-lg hidden-sm hidden-xs btn-group center">
-                                <button class="btn btn-xs btn-info">
+                                <a class="btn btn-xs btn-info" href="{{__HOST}}/admin/manage/edit?id={{@$value._id}}">
                                     <i class="icon-edit bigger-120"></i>
-                                </button>
+                                </a>
                                 &nbsp;
-                                <button class="btn btn-xs btn-danger">
+                                <a class="btn btn-xs btn-danger">
                                     <i class="icon-trash bigger-120"></i>
-                                </button>
-
+                                </a>
                             </div>
-
                         </td>
                     </tr>
                     {{/each}}
