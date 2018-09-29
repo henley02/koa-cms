@@ -58,17 +58,81 @@ router.post('/doAdd', async (ctx, next) => {
 
 router.get('/edit', async (ctx, next) => {
     let _id = ctx.query.id;
-    let result = await DB.find('admin', {_id: DB.getObjectId(_id)});
-    console.log(result)
-    if (result.length > 0) {
-        ctx.render('admin/manage/edit', {
-            data: result[0]
-        });
+    try {
+        let result = await DB.find('admin', {_id: DB.getObjectId(_id)});
+        if (result.length > 0) {
+            await ctx.render('admin/manage/edit', {
+                data: result[0]
+            });
+        } else {
+            await ctx.render('admin/error', {
+                message: '用户不存在',
+                redirect: ctx.state.__HOST + '/admin/manage',
+            })
+        }
+    } catch (error) {
+        await ctx.render('admin/error', {
+            message: '系统异常' + error,
+            redirect: ctx.state.__HOST + '/admin/manage',
+        })
     }
 })
 
-router.get('/delete', async (ctx, next) => {
-    ctx.body = '删除用户';
+router.post('/doEdit', async (ctx, next) => {
+    let _id = ctx.request.body._id;
+    console.log(_id);
+    let password = ctx.request.body.password;
+    if (!passwordReg.test(password)) {
+        ctx.body = {
+            code: -1,
+            msg: '密码最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符',
+        }
+    } else {
+        try {
+            let result = await DB.update('admin', {_id: DB.getObjectId(_id)}, {password: md5(password)});
+            if (result) {
+                ctx.body = {
+                    code: 1,
+                    msg: '修改密码成功'
+                }
+            } else {
+                ctx.body = {
+                    code: -1,
+                    msg: '修改密码失败'
+                }
+            }
+        } catch (error) {
+            ctx.body = {
+                code: -1,
+                msg: '系统异常' + error
+            }
+        }
+    }
+})
+
+router.post('/remove', async (ctx, next) => {
+    let _id = ctx.request.body.id;
+    console.log(_id)
+    try {
+        let result = await DB.deleteOne('admin', {_id: DB.getObjectId(_id)});
+        console.log(result);
+        if (result) {
+            ctx.body = {
+                code: 1,
+                msg: '修改密码成功'
+            }
+        } else {
+            ctx.body = {
+                code: -1,
+                msg: '删除失败'
+            }
+        }
+    } catch (error) {
+        ctx.body = {
+            code: -1,
+            msg: '删除失败'
+        }
+    }
 })
 
 /**

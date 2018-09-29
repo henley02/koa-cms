@@ -134,4 +134,10 @@
             }
         });
     })
+    $(window).keydown(function (e) {
+        var curKey = e.which;
+        if (curKey == 13) {
+            $('#loginBtn').click();
+        }
+    })
 </script>

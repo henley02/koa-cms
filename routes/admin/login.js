@@ -7,7 +7,7 @@ const DB = require('./../../module/db');
  * 打开登录
  */
 router.get('/login', async (ctx, next) => {
-    ctx.render('admin/login')
+    await ctx.render('admin/login')
 })
 
 /**

@@ -7,9 +7,7 @@ const DB = require('./../../module/db');
  * 打开后台首页
  */
 router.get('/', async (ctx, next) => {
-    ctx.render('admin/index')
+    await ctx.render('admin/index')
 })
-
-
 
 module.exports = router.routes();

@@ -55,7 +55,7 @@
                 Ewin.alert({message: '用户名或密码不能为空'});
                 return false;
             }
-            if ($('#password').val().trim() === '' || $('#confirmPassword').val().trim() === '') {
+            if ($('#password').val().trim() !== $('#confirmPassword').val().trim()) {
                 Ewin.alert({message: '2次密码不一致'});
                 return false;
             }
@@ -66,10 +66,10 @@
                     username: $('#username').val(),
                     password: $('#password').val()
                 },
-                error(error) {
+                error: function () {
                     Ewin.alert({title: '温馨提示', message: '服务器没有返回数据，可能服务器忙，请重试'});
                 },
-                success(res) {
+                success: function (res) {
                     if (res.code === 1) {
                         location.href = "{{__HOST}}/admin/manage";
                     } else {
