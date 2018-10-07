@@ -11,10 +11,10 @@ const classification = require('./admin/classification');
 router.use(async (ctx, next) => {
     ctx.state.__HOST = 'http://' + ctx.request.header.host;
     let pathName = url.parse(ctx.url).pathname;//请求路径
-
     ctx.state.GLOBAL = {
         url: pathName.substring(1).split("/"),//左侧菜单选中
         userInfo: ctx.session.userInfo,
+        prevPage: ctx.request.headers['referer']//上一页的地址
     }
 
     //如果登陆了
