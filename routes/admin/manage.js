@@ -119,7 +119,7 @@ router.post('/remove', async (ctx, next) => {
         if (result) {
             ctx.body = {
                 code: 1,
-                msg: '修改密码成功'
+                msg: '删除成功'
             }
         } else {
             ctx.body = {

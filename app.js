@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser');
 const sillyDateTime = require('silly-datetime');
 const app = new koa();
 
-app.keys = ['321321fafasf'];
+app.keys = ['abcdefghijklmnopqrstvuwxyz123456789'];
 const CONFIG = {
     key: 'koa:sess',
     maxAge: 60 * 60 * 60 * 30,//cookie的过期时间
