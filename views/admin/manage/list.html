@@ -85,31 +85,40 @@
 
 <script>
     function del(id) {
-        $.ajax({
-            url: "{{__HOST}}/admin/manage/remove",
-            type: 'POST',
-            data: {
-                id: id,
-            },
-            error: function () {
-                Ewin.alert({title: '温馨提示', message: '服务器没有返回数据，可能服务器忙，请重试'});
-            },
-            success(res) {
-                if (res.code === 1) {
-                    location.reload();
-                } else {
-                    Ewin.alert({title: '温馨提示', message: res.msg});
-                }
-            },
+        Ewin.confirm({
+            message: '确认删除?',
+        }).on(function (e) {
+            if (e) {
+                $.ajax({
+                    url: "{{__HOST}}/admin/remove",
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        collectionName: 'admin',
+                    },
+                    error: function () {
+                        Ewin.alert({title: '温馨提示', message: '服务器没有返回数据，可能服务器忙，请重试'});
+                    },
+                    success(res) {
+                        if (res.code === 1) {
+                            location.reload();
+                        } else {
+                            Ewin.alert({title: '温馨提示', message: res.msg});
+                        }
+                    },
+                })
+            }
         })
     }
 
     function toggleStatus(el, id) {
         $.ajax({
-            url: "{{__HOST}}/admin/manage/changeStatus",
+            url: "{{__HOST}}/admin/changeStatus",
             type: 'POST',
             data: {
                 id: id,
+                collectionName: 'admin',
+                attr: 'status'
             },
             error: function () {
                 Ewin.alert({title: '温馨提示', message: '服务器没有返回数据，可能服务器忙，请重试'});

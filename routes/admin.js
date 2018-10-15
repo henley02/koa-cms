@@ -7,6 +7,7 @@ const login = require('./admin/login');
 const user = require('./admin/user');
 const manage = require('./admin/manage');
 const classification = require('./admin/classification');
+const article = require('./admin/article');
 
 router.use(async (ctx, next) => {
     ctx.state.__HOST = 'http://' + ctx.request.header.host;
@@ -31,5 +32,6 @@ router.use(login);
 router.use('/user', user);
 router.use('/manage', manage);
 router.use('/classification', classification);
+router.use('/article', article);
 
 module.exports = router.routes();

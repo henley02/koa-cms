@@ -46,7 +46,6 @@ class DB {
             })
         })
     }
-
     /**
      * 更新数据
      * @param collectionName

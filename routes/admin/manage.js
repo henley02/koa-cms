@@ -3,6 +3,8 @@ const md5 = require('md5');
 const DB = require('./../../module/db');
 const {usernameReg, passwordReg} = require('./../../module/config');
 
+//管理员管理
+
 router.get('/', async (ctx, next) => {
     let list = await DB.find('admin', {});
     await ctx.render('admin/manage/list', {
@@ -110,58 +112,4 @@ router.post('/doEdit', async (ctx, next) => {
     }
 })
 
-router.post('/remove', async (ctx, next) => {
-    let _id = ctx.request.body.id;
-    console.log(_id)
-    try {
-        let result = await DB.deleteOne('admin', {_id: DB.getObjectId(_id)});
-        console.log(result);
-        if (result) {
-            ctx.body = {
-                code: 1,
-                msg: '删除成功'
-            }
-        } else {
-            ctx.body = {
-                code: -1,
-                msg: '删除失败'
-            }
-        }
-    } catch (error) {
-        ctx.body = {
-            code: -1,
-            msg: '删除失败'
-        }
-    }
-})
-
-/**
- * 修改管理员的状态
- */
-router.post('/changeStatus', async (ctx, next) => {
-    let _id = DB.getObjectId(ctx.request.body.id);
-    let data = await DB.find('admin', _id);
-    if (data.length > 0) {
-        let res = await DB.update('admin', {_id: _id}, {status: data[0].status === 1 ? 0 : 1});
-        if (res.result.ok === 1) {
-            ctx.body = {
-                code: 1,
-                msg: '修改管理员状态成功',
-                data: '',
-            }
-        } else {
-            ctx.body = {
-                code: -1,
-                msg: '修改管理员状态失败',
-                data: '',
-            }
-        }
-    } else {
-        ctx.body = {
-            code: -1,
-            msg: '管理员不存在',
-            data: '',
-        }
-    }
-})
 module.exports = router.routes();
