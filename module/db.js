@@ -28,14 +28,28 @@ class DB {
 
     /**
      * 查找数据
-     * @param collectionName 集合名
-     * @param json 条件
+     *  DB.find('user',{}) 找出所有的数据
+     *  DB.find('user',{},{"title":1})    返回所有数据  只返回一列title
+     *  DB.find('user',{},{"title":1},{page:2,pageSize:20}) 返回第二页的数据
+     * @param collectionName
+     * @param json
+     * @param json2
+     * @param json3
      * @returns {Promise}
      */
-    find(collectionName, json) {
+    find(collectionName, json, json2, json3) {
+        let attr = {}, slipNum = 0, pageSize = 0;
+        if (arguments.length == 3) {
+            attr = json2;
+        } else if (arguments.length == 4) {
+            attr = json2;
+            let pageNo = json3.pageNo || 1;
+            pageSize = json3.pageSize || 20;
+            slipNum = (pageNo - 1) * pageSize;
+        }
         return new Promise((resolve, reject) => {
             this.connect().then((db) => {
-                let result = db.collection(collectionName).find(json);
+                let result = db.collection(collectionName).find(json, attr).skip(slipNum).limit(pageSize);
                 result.toArray((error, data) => {
                     if (!error) {
                         resolve(data);
@@ -46,6 +60,7 @@ class DB {
             })
         })
     }
+
     /**
      * 更新数据
      * @param collectionName
@@ -101,6 +116,26 @@ class DB {
                         reject(err);
                     } else {
 
+                        resolve(result);
+                    }
+                });
+            })
+        })
+    }
+
+    /**
+     * 获取总条数
+     * @param collectionName
+     * @param json
+     * @returns {Promise}
+     */
+    count(collectionName, json) {
+        return new Promise((resolve, reject) => {
+            this.connect().then((db) => {
+                db.collection(collectionName).countDocuments(json, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
                         resolve(result);
                     }
                 });

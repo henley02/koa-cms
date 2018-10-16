@@ -1,6 +1,4 @@
 const router = require('koa-router')();
-const svgCaptcha = require('svg-captcha');
-const {getMD5} = require('./../../module/tool');
 const DB = require('./../../module/db');
 
 /**

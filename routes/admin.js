@@ -1,5 +1,5 @@
 const router = require('koa-router')();
-
+const ueditor = require('koa2-ueditor');
 const url = require('url');
 
 const index = require('./admin/index');
@@ -8,6 +8,12 @@ const user = require('./admin/user');
 const manage = require('./admin/manage');
 const classification = require('./admin/classification');
 const article = require('./admin/article');
+
+//富文本图片上传地址 ueditor.config.js 配置图片post地址
+router.all('/editorUpload', ueditor(['public', {
+    "imageAllowFiles": [".png", ".jpg", ".jpeg"],
+    "imagePathFormat": "/upload/ueditor/image/{yyyy}{mm}{dd}/{filename}"  // 保存为原文件名
+}]))
 
 router.use(async (ctx, next) => {
     ctx.state.__HOST = 'http://' + ctx.request.header.host;

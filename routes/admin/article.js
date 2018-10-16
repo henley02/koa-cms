@@ -1,16 +1,34 @@
 const router = require('koa-router')();
 const DB = require('./../../module/db');
-const tool = require('./../../module/tool');
+const multer = require('koa-multer');// 文件上传
+const path = require('path');
+const {isExists, createDir} = require('./../../module/file');
+
+const storage = multer.diskStorage({
+    destination: async (req, file, cb) => {
+        let dir = path.resolve(__dirname, '../../public/uploads/');
+        let isExist = await isExists(dir);
+        if (!isExist) {
+            await createDir(dir);
+        }
+        cb(null, dir);// 配置上传文件的目录
+    },
+    filename: function (req, file, cb) {
+        let fileFormat = (file.originalname).split('.');//获取后缀名
+        cb(null, Date.now() + '.' + fileFormat[fileFormat.length - 1]);
+    }
+});
+const upload = multer({storage: storage});
 
 //内容管理
-
 router.get('/', async (ctx, next) => {
     try {
         let page = ctx.query.page || 1;
         let pageSize = ctx.query.pageSize || 10;
-        let originData = await DB.find('article', {});
-        let list = tool.cateToList(originData);
-        await ctx.render('admin/article/list', {list: list});
+        let list = await DB.find('user', {}, {}, {pageNo: page, pageSize: parseInt(pageSize)});
+        let count = await DB.count('user', {});
+        let totalPages = Math.ceil(count / pageSize);
+        await ctx.render('admin/article/list', {list: list, totalPages: totalPages, currentPage: page});
     } catch (error) {
         await ctx.render('admin/error', {
             message: '系统异常' + error,
@@ -20,26 +38,17 @@ router.get('/', async (ctx, next) => {
 })
 
 router.get('/add', async (ctx, next) => {
-    let list = await DB.find('article', {pid: '0'});
-    await ctx.render('admin/article/add', {
-        list
-    })
+    await ctx.render('admin/article/add');
 })
 
-router.post('/doAdd', async (ctx, next) => {
+router.post('/doAdd', upload.single('pic'), async (ctx, next) => {
     let params = ctx.request.body;
+    console.log(ctx.req.file);
     params.add_time = new Date();
-    let result = await DB.insert('article', params);
-    if (result) {
-        ctx.body = {
-            code: 1,
-            msg: '添加成功',
-        }
-    } else {
-        ctx.body = {
-            code: -1,
-            msg: '添加失败',
-        }
+    console.log(params);
+    ctx.body = {
+        filename: ctx.req.file ? ctx.req.file.filename : '',
+        body: ctx.req.body
     }
 })
 

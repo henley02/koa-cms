@@ -14,7 +14,7 @@
 <script src="{{__HOST}}/admin/js/html5shiv.js"></script>
 <script src="{{__HOST}}/admin/js/respond.min.js"></script>
 <![endif]-->
-
+<script src="{{__HOST}}/admin/js/jqpaginator.js"></script>
 {{include 'admin/components/nav-top.html'}}
 
 <div class="main-container-inner">
@@ -47,8 +47,8 @@
                     <tbody>
                     {{each list}}
                     <tr>
-                        <td>{{$value.title}}</td>
-                        <td>{{$value.catename}}</td>
+                        <td>{{$value.username}}</td>
+                        <td>{{$value.password}}</td>
                         <td>{{$value.last_time | dateFormat}}</td>
                         <td>排序</td>
                         <td>
@@ -95,7 +95,10 @@
                     </tbody>
                 </table>
             </div>
-
+            <!-- 分页按钮 -->
+            <div class="footer">
+                <ul class="pagination" id="pagination"></ul>
+            </div>
         </div>
     </div>
 </div>
@@ -103,6 +106,18 @@
 {{include 'admin/components/footer.html'}}
 
 <script>
+    $('#pagination').jqPaginator({
+        totalPages: {{totalPages}},
+        visiblePages: 10,
+        currentPage: {{currentPage}},
+        onPageChange: function (num, type) {
+            console.log(num, type);
+            if (type == 'change') {
+                location.href = "{{__HOST}}/admin/article?page=" + num;
+            }
+        }
+    });
+
     function del(id) {
         Ewin.confirm({
             message: '确认删除?',
