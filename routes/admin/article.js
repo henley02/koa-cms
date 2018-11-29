@@ -3,10 +3,11 @@ const DB = require('./../../module/db');
 const multer = require('koa-multer');// 文件上传
 const path = require('path');
 const {isExists, createDir} = require('./../../module/file');
+const tool = require('./../../module/tool');
 
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
-        let dir = path.resolve(__dirname, '../../public/uploads/');
+        let dir = path.resolve(__dirname, '../../public/upload/');
         let isExist = await isExists(dir);
         if (!isExist) {
             await createDir(dir);
@@ -25,8 +26,8 @@ router.get('/', async (ctx, next) => {
     try {
         let page = ctx.query.page || 1;
         let pageSize = ctx.query.pageSize || 10;
-        let list = await DB.find('user', {}, {}, {pageNo: page, pageSize: parseInt(pageSize)});
-        let count = await DB.count('user', {});
+        let list = await DB.find('articlecate', {}, {}, {pageNo: page, pageSize: parseInt(pageSize)});
+        let count = await DB.count('articlecate', {});
         let totalPages = Math.ceil(count / pageSize);
         await ctx.render('admin/article/list', {list: list, totalPages: totalPages, currentPage: page});
     } catch (error) {
@@ -38,11 +39,15 @@ router.get('/', async (ctx, next) => {
 })
 
 router.get('/add', async (ctx, next) => {
-    await ctx.render('admin/article/add');
+        let originData = await DB.find('articlecate', {});
+    let list = tool.cateToList(originData);
+    console.log(list);
+    await ctx.render('admin/article/add',{cateList:list});
 })
 
 router.post('/doAdd', upload.single('pic'), async (ctx, next) => {
     let params = ctx.request.body;
+    console.log(params);
     console.log(ctx.req.file);
     params.add_time = new Date();
     console.log(params);
